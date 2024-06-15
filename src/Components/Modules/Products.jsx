@@ -1,44 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Container, Row, Col } from 'react-bootstrap';
+import { Container, Table, Spinner, Alert } from 'react-bootstrap';
 
-const Products = () => {
-    const [items, setItems] = useState([
-        {
-            id: 1,
-            product_name: "Product 1",
-            price: 999,
-            image: "/logo192.png",
-        },
-        {
-            id: 2,
-            product_name: "Product 2",
-            price: 1999,
-            image: "/logo192.png",
-        },
-        {
-            id: 3,
-            product_name: "Product 3",
-            price: 2999,
-            image: "/logo192.png",
-        }
-    ]);
+const Products = ({ title }) => {
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetch("http://localhost:4001/api/category")
+            .then((res) => res.json())
+            .then((data) => {
+                setItems(data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setError(error);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) {
+        return (
+            <Container>
+                <h1>{title}</h1>
+                <Spinner animation="border" />
+            </Container>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container>
+                <h1>{title}</h1>
+                <Alert variant="danger">
+                    Failed to load products: {error.message}
+                </Alert>
+            </Container>
+        );
+    }
 
     return (
         <Container>
-            <Row>
-                {items.map((item) => (
-                    <Col key={item.id} md={4} className="mb-4">
-                        <Card>
-                            <Card.Img variant="top" src={process.env.PUBLIC_URL + item.image} />
-                            <Card.Body>
-                                <Card.Title>{item.product_name}</Card.Title>
-                                <Card.Text>${item.price}</Card.Text>
-                                <Button>Buy Now</Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+            <h1>{title}</h1>
+            <Table striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Thumbnail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items.map((item) => (
+                        <tr key={item._id}>
+                            <td>{item.title}</td>
+                            <td>{item.description}</td>
+                            <td><img alt={item.title} src={item.thumbnail} height="100" /></td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </Container>
     );
 };

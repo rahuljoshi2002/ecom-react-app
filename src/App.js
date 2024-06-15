@@ -6,6 +6,7 @@ import Layout from './Components/Layouts/Layout';
 import LearnHooks from './Components/Modules/LearnHooks';
 import SignIn from './Components/Pages/SignIn';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +16,7 @@ function App() {
         <Route path='/About' element={<About/>} />
         <Route path='/Learnhooks' element={<LearnHooks />}></Route>
         <Route path='/SignIn' element={<SignIn/>} />
+        <Route path='/Home' element={<Home/>}></Route>
 
         </Route>
       </Routes>
